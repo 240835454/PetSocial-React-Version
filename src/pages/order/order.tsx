@@ -5,14 +5,17 @@ export default class order extends Component {
     config: Config = {
         navigationBarTitleText: '订单管理'
     }
-    componentDidMount () {  
-        Taro.request({   
+    state: {
+  
+    } 
+    componentDidMount () {   
+        Taro.request({    
           url: 'http://localhost:3000/about',    
           header:{
-            //   'content-type': 'application/json' 
-          }   
+              'content-type': 'application/json'
+          }     
         }).then(res=>{
-          console.log(res.data);
+          console.log(res.data); 
         }).catch(err=>{
           console.log(err); 
         })
