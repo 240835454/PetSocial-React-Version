@@ -10,6 +10,7 @@ const puppeteer = require('puppeteer');
 const {
   screenshot
 } = require('../public/default');
+const fs = require('fs');
 
 
 
@@ -19,7 +20,7 @@ const {
 
 (async () => {
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
     defaultViewport: {
       width: 1920,
       height: 1080
@@ -27,7 +28,7 @@ const {
   })
 
   const page = await browser.newPage();
-  await page.goto('http://www.yc.cn/pet', {
+  await page.goto('http://www.yc.cn/pet/qita', {
     waitUntil: 'networkidle2' //网络空闲说明已加载完毕
   });
 
@@ -67,7 +68,7 @@ const {
   console.log(imgList);
   console.log(nameList);
 
-  await page.waitFor(3000);
+  await page.waitFor(5000);
 
 
 
@@ -76,8 +77,11 @@ const {
     // console.log('点击下一页')
     console.log('当前页码:' + i);
     await page.click("[data-page='" + i + "']");
-    // await page.waitFor(3000);
-    
+    // await page.click("[class=laypage_last]");
+
+
+    await page.waitFor(5000);
+
     let currentNameList = await page.$$eval('.info-t', item => {
       let list = [];
       for (let i = 0; i < item.length; i++) {
@@ -86,7 +90,7 @@ const {
       return list;
     })
 
-    let currentImgList = page.$$eval('img[class=pic]', item => {
+    let currentImgList = await page.$$eval('img[class=pic]', item => {
       let list = [];
       for (let i = 0; i < item.length; i++) {
         list.push(item[i].src)
@@ -100,7 +104,7 @@ const {
     console.log(nameList);
     console.log(imgList);
 
-    await page.waitFor(5000);
+    // await page.waitFor(5000);
   }
 
 
@@ -144,8 +148,51 @@ const {
   //   console.log(imgList2);
   //   console.log(nameList2);
 
+  let dataList = {};
+  dataList.nameList = nameList;
+  dataList.imgList = imgList;
+
+  let data = JSON.stringify(dataList);
 
 
+  // 狗
+  // await fs.writeFile('./dog.json',data,(err)=>{
+  //   if(err){
+  //     throw err;
+  //   }
+  //   console.log('写入成功');
+  // })
 
-    await browser.close();
+  // 猫
+  // await fs.writeFile('./cat.json',data,(err)=>{
+  //   if(err){
+  //     throw err;
+  //   }
+  //   console.log('写入成功');
+  // })
+
+  // 兔子
+  // await fs.writeFile('./rabbit.json',data,(err)=>{
+  //   if(err){
+  //     throw err;
+  //   }
+  //   console.log('写入成功');
+  // })
+
+  // 鼠
+  await fs.writeFile('./qita.json',data,(err)=>{
+    if(err){
+      throw err;
+    }
+    console.log('写入成功');
+  })
+
+  // await fs.appendFile('./dog.json',data,(err)=>{
+  //   if(err){
+  //     throw err;
+  //   }
+  //   console.log('追加写入成功');
+  // })
+
+  await browser.close();
 })();
